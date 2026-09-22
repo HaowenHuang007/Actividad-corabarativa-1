@@ -1,0 +1,88 @@
+@startuml
+title Sistema de biblioteca - Diagrama de clases
+
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+
+class Biblioteca {
+    - libros : Libro[20]
+    - usuarios : Usuario[5]
+    - cantidadLibros : int
+    - cantidadUsuarios : int
+    --
+    + Biblioteca()
+    + mostrarLibrosDisponibles() : void
+    + mostrarTodosLosLibros() : void
+    + mostrarHistorialUsuario(dni : string) : void
+    + comprobarLibroDeUsuario(dni : string, id : int) : void
+    + prestarLibro(id : int, dni : string, mensaje : string) : bool
+    + devolverLibro(id : int, dni : string, mensaje : string) : bool
+}
+
+class Libro {
+    - identificador : int
+    - titulo : string
+    - categoria : string
+    - disponible : bool
+    - dniPrestamo : string
+    --
+    + Libro()
+    + Libro(id : int, titulo : string, categoria : string)
+    + estaDisponible() : bool
+    + prestar(dni : string) : void
+    + devolver() : void
+}
+
+class Usuario {
+    - nombre : string
+    - apellidos : string
+    - dni : string
+    - librosActuales : Lista<int>
+    - historialLibros : Lista<int>
+    --
+    + Usuario()
+    + Usuario(nombre : string, apellidos : string, dni : string)
+    + tieneLibro(id : int) : bool
+    + agregarLibroActual(id : int) : bool
+    + registrarDevolucion(id : int) : bool
+}
+
+class "Lista<T>" as Lista {
+    - elementos : T[50]
+    - cantidad : int
+    --
+    + agregar(elemento : T) : bool
+    + eliminar(elemento : T) : bool
+    + contiene(elemento : T) : bool
+    + obtener(posicion : int, elemento : T) : bool
+    + getCantidad() : int
+}
+
+class Programa {
+    + ejecutarPrograma() : int
+    - mostrarMenu() : void
+    - leerEntero(mensaje : string) : int
+    - leerTexto(mensaje : string) : string
+}
+
+class Main {
+    + main() : int
+}
+
+Biblioteca "1" *-- "20" Libro : contiene
+Biblioteca "1" *-- "5" Usuario : registra
+Usuario "1" *-- "2" Lista : utiliza
+Programa ..> Biblioteca : gestiona
+Main ..> Programa : inicia
+
+note right of Biblioteca
+    Los libros y usuarios se cargan
+    con datos iniciales fijos.
+end note
+
+note bottom of Lista
+    Plantilla propia para evitar
+    contenedores estandar de C++.
+end note
+
+@enduml
