@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 4.3)
-project(ActividadGrupal1)
+project(Primera_actividad_colaborativa)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ActividadGrupal1 main.cpp)
-# hola
+include_directories(.)
+
+add_executable(Primera_actividad_colaborativa
+        libro.cpp
+        main.cpp
+        libro.h
+)
