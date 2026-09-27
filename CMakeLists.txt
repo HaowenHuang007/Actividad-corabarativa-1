@@ -3,5 +3,7 @@ project(ActividadGrupal1)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(ActividadGrupal1 main.cpp)
-# hola
+add_executable(ActividadGrupal1 main.cpp
+        main.cpp
+        main.cpp
+        Usuario.cpp)
