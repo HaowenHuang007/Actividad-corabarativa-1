@@ -1,21 +1,40 @@
 #include <iostream>
-
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+#include "Libro.h"
+#include "Usuario.h"
 
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
+    Libro libro1("El Quijote", "Miguel de Cervantes", "drama");
+    Libro libro2("El senor de los anillos", "J.R.R. Tolkien", "aventuras");
 
-    const auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    Usuario usuario1("Ana", "Garcia Lopez", "12345678A");
+    Usuario usuario2("Luis", "Martinez Ruiz", "87654321B");
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
-    }
+    std::cout << "--- Estado inicial ---" << std::endl;
+    libro1.mostrarInfo();
+    libro2.mostrarInfo();
 
-//hola
-    // prueba alejandro
-    // hola  hola hola
-    return 1;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
+    std::cout << std::endl << "--- Ana saca 'El Quijote' ---" << std::endl;
+    usuario1.sacarLibro(&libro1);
+    libro1.mostrarInfo();
+
+    std::cout << std::endl << "--- Luis intenta sacar 'El Quijote' (ya prestado) ---" << std::endl;
+    bool exito = usuario2.sacarLibro(&libro1);
+    std::cout << "¿Consiguio sacarlo? " << (exito ? "si" : "no") << std::endl;
+
+    std::cout << std::endl << "--- Luis saca 'El senor de los anillos' ---" << std::endl;
+    usuario2.sacarLibro(&libro2);
+
+    std::cout << std::endl << "--- Libros actuales de cada usuario ---" << std::endl;
+    usuario1.mostrarLibrosActuales();
+    usuario2.mostrarLibrosActuales();
+
+    std::cout << std::endl << "--- Ana devuelve 'El Quijote' ---" << std::endl;
+    usuario1.devolverLibro(&libro1);
+    libro1.mostrarInfo();
+    usuario1.mostrarLibrosActuales();
+
+    std::cout << std::endl << "--- Historial de Ana (se mantiene tras devolver) ---" << std::endl;
+    usuario1.mostrarHistorial();
+
+    return 0;
 }
