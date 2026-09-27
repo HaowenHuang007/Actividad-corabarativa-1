@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(Primera_actividad_colaborativa
-        libro.cpp
         main.cpp
-        libro.h
+        Programa.cpp
+        Programa.h
 )
