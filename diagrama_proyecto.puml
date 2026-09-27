@@ -1,0 +1,76 @@
+@startuml
+title Sistema de biblioteca - Diagrama de clases
+
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+
+class Libro {
+    - identificador : int
+    - titulo : string
+    - categoria : string
+    - disponible : bool
+    - dniPrestamo : string
+    --
+    + Libro()
+    + Libro(id : int, titulo : string, categoria : string)
+    + estaDisponible() : bool
+    + prestar(dni : string) : void
+    + devolver() : void
+}
+
+class Usuario {
+    - nombre : string
+    - apellidos : string
+    - dni : string
+    - librosActuales : Pila<int, 5>
+    - historialLibros : Pila<int, 50>
+    --
+    + Usuario()
+    + Usuario(nombre : string, apellidos : string, dni : string)
+    + tieneLibro(id : int) : bool
+    + agregarLibroActual(id : int) : bool
+    + registrarDevolucion(id : int) : bool
+}
+
+class "Pila<T, N>" as Pila {
+    - elementos : T[N]
+    - cantidad : int
+    --
+    + vacia() : bool
+    + llena() : bool
+    + tamano() : int
+    + apilar(elemento : T) : void
+    + desapilar() : void
+    + cima() : T
+    + obtener(posicion : int, elemento : T) : bool
+    + reemplazar(posicion : int, elemento : T) : bool
+}
+
+class Programa {
+    + ejecutarPrograma(libros, usuarios) : int
+    - mostrarLibrosDisponibles(libros) : void
+    - mostrarTodosLosLibros(libros) : void
+    - mostrarHistorialUsuario(libros, usuarios, dni) : void
+    - comprobarLibroDeUsuario(libros, usuarios, dni, id) : void
+    - prestarLibro(libros, usuarios, id, dni, mensaje) : bool
+    - devolverLibro(libros, usuarios, id, dni, mensaje) : bool
+}
+
+class Main {
+    + cargarDatosIniciales(libros, usuarios) : void
+    + main() : int
+}
+
+class "Pila<Libro, 20>" as PilaLibros
+class "Pila<Usuario, 5>" as PilaUsuarios
+
+Main ..> PilaLibros : declara e inicializa
+Main ..> PilaUsuarios : declara e inicializa
+PilaLibros "1" o-- "20" Libro : almacena
+PilaUsuarios "1" o-- "5" Usuario : almacena
+Usuario "1" *-- "2" Pila : utiliza
+Programa ..> PilaLibros : gestiona
+Programa ..> PilaUsuarios : gestiona
+Main ..> Programa : inicia
+
+@enduml

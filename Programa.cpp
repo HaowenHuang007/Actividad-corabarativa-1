@@ -3,6 +3,7 @@
 //
 
 #include "Programa.h"
+#include "Usuario.h"
 
 #include <iostream>
 #include <limits>
@@ -17,13 +18,13 @@ int Programa::leerEntero(const std::string& mensaje)
 
         if (std::cin >> valor)
         {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea (incluido '\n')
             return valor;
         }
 
         std::cout << "Entrada no valida. Escribe un numero.\n";
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.clear(); // Limpia el estado de error de cin
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta la entrada invalida del buffer
     }
 }
 
@@ -31,7 +32,7 @@ std::string Programa::leerTexto(const std::string& mensaje)
 {
     std::string texto;
     std::cout << mensaje;
-    std::getline(std::cin, texto);
+    std::getline(std::cin, texto); // Lee la línea completa (permite espacios)
     return texto;
 }
 
@@ -57,16 +58,16 @@ bool Programa::buscarLibro(
     for (int i = 0; i < libros.tamano(); i++)
     {
         Libro libro;
-        libros.obtener(i, libro);
+        libros.obtener(i, libro); // Copia el libro en la posición i para poder consultarlo
 
         if (libro.getIdentificador() == identificador)
         {
-            posicion = i;
+            posicion = i; // Guarda la posición encontrada
             return true;
         }
     }
 
-    return false;
+    return false; // No se encontró ningún libro con ese identificador
 }
 
 bool Programa::buscarUsuario(
@@ -77,7 +78,7 @@ bool Programa::buscarUsuario(
     for (int i = 0; i < usuarios.tamano(); i++)
     {
         Usuario usuario;
-        usuarios.obtener(i, usuario);
+        usuarios.obtener(i, usuario); // Copia el usuario en la posición i para poder consultarlo
 
         if (usuario.getDni() == dni)
         {
@@ -97,10 +98,10 @@ bool Programa::obtenerLibro(
 {
     if (!buscarLibro(libros, identificador, posicion))
     {
-        return false;
+        return false; // Corta aquí si el libro no existe
     }
 
-    return libros.obtener(posicion, libro);
+    return libros.obtener(posicion, libro); // Recupera los datos completos del libro ya localizado
 }
 
 bool Programa::obtenerUsuario(
@@ -120,7 +121,7 @@ bool Programa::obtenerUsuario(
 void Programa::mostrarLibrosDisponibles(
     const Pila<Libro, MAX_LIBROS_REGISTRADOS>& libros) const
 {
-    bool hayDisponibles = false;
+    bool hayDisponibles = false; // Controla si se ha encontrado al menos un libro libre
 
     std::cout << "\n--- Libros disponibles ---\n";
 
@@ -165,7 +166,7 @@ void Programa::mostrarTodosLosLibros(
         }
         else
         {
-            std::cout << "Prestado a " << libro.getDniPrestamo();
+            std::cout << "Prestado a " << libro.getDniPrestamo(); // Muestra a quién se lo ha prestado
         }
 
         std::cout << "\n";
@@ -200,7 +201,7 @@ void Programa::mostrarHistorialUsuario(
         for (int i = 0; i < usuario.getCantidadLibrosActuales(); i++)
         {
             int identificadorLibro;
-            usuario.obtenerLibroActual(i, identificadorLibro);
+            usuario.obtenerLibroActual(i, identificadorLibro); // Obtiene el ID del libro i en préstamo
             Libro libro;
             int posicionLibro;
 
@@ -223,7 +224,7 @@ void Programa::mostrarHistorialUsuario(
         for (int i = 0; i < usuario.getCantidadHistorial(); i++)
         {
             int identificadorLibro;
-            usuario.obtenerLibroHistorial(i, identificadorLibro);
+            usuario.obtenerLibroHistorial(i, identificadorLibro); // Obtiene el ID del libro i ya devuelto
             Libro libro;
             int posicionLibro;
 
@@ -259,7 +260,7 @@ void Programa::comprobarLibroDeUsuario(
         return;
     }
 
-    if (usuario.tieneLibro(identificadorLibro))
+    if (usuario.tieneLibro(identificadorLibro)) // Comprueba si el libro está en la lista de préstamos actuales del usuario
     {
         std::cout << "El usuario tiene actualmente el libro: "
                   << libro.getTitulo() << ".\n";
@@ -301,15 +302,15 @@ bool Programa::prestarLibro(
         return false;
     }
 
-    if (!usuario.agregarLibroActual(identificadorLibro))
+    if (!usuario.agregarLibroActual(identificadorLibro)) // Falla si ya lo tiene o si llegó al máximo de préstamos
     {
         mensaje = "El usuario ya tiene el libro o ha alcanzado el maximo de 5 prestamos.";
         return false;
     }
 
-    libro.prestar(dni);
-    libros.reemplazar(posicionLibro, libro);
-    usuarios.reemplazar(posicionUsuario, usuario);
+    libro.prestar(dni); // Marca el libro como prestado a este DNI
+    libros.reemplazar(posicionLibro, libro); // Persiste el cambio de estado del libro en la pila
+    usuarios.reemplazar(posicionUsuario, usuario); // Persiste el nuevo préstamo del usuario en la pila
     mensaje = "Prestamo realizado correctamente.";
     return true;
 }
@@ -344,21 +345,21 @@ bool Programa::devolverLibro(
         return false;
     }
 
-    if (libro.getDniPrestamo() != dni || !usuario.tieneLibro(identificadorLibro))
+    if (libro.getDniPrestamo() != dni || !usuario.tieneLibro(identificadorLibro)) // Verifica que el préstamo es de este usuario
     {
         mensaje = "Ese libro no esta prestado al usuario indicado.";
         return false;
     }
 
-    if (!usuario.registrarDevolucion(identificadorLibro))
+    if (!usuario.registrarDevolucion(identificadorLibro)) // Falla si el historial de devoluciones está lleno
     {
         mensaje = "No se puede registrar la devolucion porque el historial esta lleno.";
         return false;
     }
 
-    libro.devolver();
-    libros.reemplazar(posicionLibro, libro);
-    usuarios.reemplazar(posicionUsuario, usuario);
+    libro.devolver(); // Marca el libro como disponible de nuevo
+    libros.reemplazar(posicionLibro, libro); // Persiste el cambio de estado del libro en la pila
+    usuarios.reemplazar(posicionUsuario, usuario); // Persiste la devolución en el historial del usuario
     mensaje = "Devolucion realizada correctamente.";
     return true;
 }
@@ -404,7 +405,7 @@ int Programa::ejecutarPrograma(
             int identificador = leerEntero("ID del libro que quieres sacar: ");
             std::string dni = leerTexto("DNI del usuario: ");
             std::string mensaje;
-            prestarLibro(libros, usuarios, identificador, dni, mensaje);
+            prestarLibro(libros, usuarios, identificador, dni, mensaje); // El resultado se ignora, solo importa el mensaje
             std::cout << mensaje << "\n";
             break;
         }
@@ -427,7 +428,7 @@ int Programa::ejecutarPrograma(
             std::cout << "Opcion no valida.\n";
             break;
         }
-    } while (opcion != 0);
+    } while (opcion != 0); // Repite el menú hasta que se elija salir
 
     return 0;
 }
